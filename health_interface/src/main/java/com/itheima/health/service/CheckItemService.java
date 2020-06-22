@@ -11,4 +11,6 @@ import java.util.List;
 public interface CheckItemService {
     //查询所有
     public List<CheckItem> findAll();
+
+    void add(CheckItem checkItem);
 }

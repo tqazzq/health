@@ -23,4 +23,10 @@ public class CheckItemServiceImpl implements CheckItemService {
         return list;
 
     }
+
+    @Override
+    //新增
+    public void add(CheckItem checkItem) {
+        checkItemDao.add(checkItem);
+    }
 }

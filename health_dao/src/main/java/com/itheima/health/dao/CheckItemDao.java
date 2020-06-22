@@ -11,4 +11,6 @@ import java.util.List;
  */
 public interface CheckItemDao {
     public List<CheckItem> findAll();
+
+    void add(CheckItem checkItem);
 }
