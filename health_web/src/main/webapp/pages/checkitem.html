@@ -30,7 +30,7 @@
             <div class="filter-container">
                 <el-input placeholder="项目编码/项目名称" v-model="pagination.queryString" style="width: 200px;"
                           class="filter-item"></el-input>
-                <el-button @click="findPage()" class="dalfBut">查询</el-button>
+                <el-button @click="handleCurrentChange(1)" class="dalfBut">查询</el-button>
                 <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
             </div>
             <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
@@ -230,42 +230,48 @@
         },
         //钩子函数，VUE对象初始化完成后自动执行
         created() {
-            axios.get('/checkitem/findAll.do').then(res => {
-                var result = res.data;
-                if (result.flag) {
-                    //成功
-                    this.dataList = result.data;
-                } else {
-                    this.$message({
-                        message: result.message,
-                        type: 'error'
-                    })
-
-                }
-            })
+            this.findPage();
         },
         methods: {
-            //编辑
+            //编辑 提交
             handleEdit() {
+                this.$refs['dataEditForm'].validate((valid) =>{
+                    if (valid){
+                        //检验通过提交数据给后台
+                        axios.post('/checkitem/update.do',this.formData).then((res) => {
+                            this.$message({
+                                 message: res.data.message,
+                                 type: res.data.flag?"success":"error"
+                             });
+                            if (res.data.flag){
+                                this.dialogFormVisible4Edit = false;
+                                this.findPage();
+                            }
+                        })
+                    }else {
+                        console.log('error submit');
+                        return false;
+                    }
+                })
             },
             //添加
             handleAdd() {
                 this.$refs['dataAddForm'].validate((valid) => {
-                    if (valid){
-                        axios.post("/checkitem/add.do",this.formData).then((response)=>{
+                    if (valid) {
+                        axios.post("/checkitem/add.do", this.formData).then((response) => {
                             this.dialogFormVisible = false;
-                            if (response.data.flag){
+                            if (response.data.flag) {
                                 this.$message({
-                                     message: response.data.message,
-                                     type: 'success'
-                                 });
-                            }else {
+                                    message: response.data.message,
+                                    type: 'success'
+                                });
+                            } else {
                                 this.$message.error(response.data.message);
                             }
-                        }).finally(()=>{
+                        }).finally(() => {
                             this.findPage();
                         });
-                    }else {
+                    } else {
                         this.$message.error("表单数据校验失败");
                         return false;
                     }
@@ -273,6 +279,17 @@
             },
             //分页查询
             findPage() {
+                //发送axios请求,提交pagination信息
+                axios.post('/checkitem/findPage.do', this.pagination).then(response => {
+                    if (response.data.flag) {
+                        //如果查询成功的话绑定数据
+                        this.dataList = response.data.data.rows;
+                        //总记录数
+                        this.pagination.total = response.data.data.total;
+                    } else {
+                        this.$message.error(response.data.message);
+                    }
+                });
             },
             // 重置表单
             resetForm() {
@@ -286,12 +303,48 @@
             },
             // 弹出编辑窗口
             handleUpdate(row) {
+                // alert(row.id);
+                // 重置表单
+                this.resetForm();
+                // 获取点击的一栏的id
+                var id = row.id;
+                //弹出编辑窗口
+                this.dialogFormVisible4Edit = true;
+                //回显发送请求
+                axios.get('/checkitem/findById.do?id=' + id).then(res => {
+                    if (res.data.flag){
+                        //绑定数据回显
+                        this.formData = res.data.data;
+                    } else{
+                        this.$message.error(res.data.message);
+                    }
+                })
             },
             //切换页码
             handleCurrentChange(currentPage) {
+                this.pagination.currentPage = currentPage;
+                this.findPage();
             },
             // 删除
             handleDelete(row) {
+                // alert(row.id);
+                //elment提供了防呆方法$confirm
+                var id = row.id;
+                this.$confirm("此操作将【永久删除】该检查项是否继续", "提示", {type: 'warning'}).then(() => {
+                }).then(() => {
+                    axios.post('/checkitem/deleteById.do?id=' + id).then((response) => {
+                        this.$message({
+                            message: response.data.message,
+                            type: response.data.flag ? "success" : "error"
+                        });
+                        if (response.data.flag){
+                            //成功则刷新页面
+                            this.findPage();
+                        }
+                    })
+                }).catch(()=>{
+                    //防止报错
+                })
             }
         }
     })
