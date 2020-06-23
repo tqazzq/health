@@ -270,7 +270,7 @@
             pagination: {//分页相关属性
                 currentPage: 1,
                 pageSize: 10,
-                total: 100,
+                total: 0,
                 queryString: null,
             },
             dataList: [],//列表数据
@@ -285,11 +285,27 @@
             }
         },
         created() {
-
+            //钩子函数页面组件脚在完毕后执行此方法
+            this.findPage();
         },
         methods: {
             //编辑
             handleEdit() {
+                //发送请求  提交数据模型
+                axios.post('/checkgroup/edit.do?checkitemIds=' + this.checkitemIds,this.formData).then((res)=>{
+                    this.dialogFormVisible4Edit = false;
+                    if (res.data.flag){
+                        this.$message({
+                             message: res.data.message,
+                             type: 'success'
+                         });
+                    }else {
+                        this.$message.error(res.data.message);
+                    }
+                }).finally(()=>{
+                    //刷新页面
+                    this.findPage();
+                })
             },
             //添加
             handleAdd() {
@@ -311,6 +327,14 @@
             },
             //分页查询
             findPage() {
+                axios.post('/checkgroup/findPage.do',this.pagination).then((res)=>{
+                    if (res.data.flag){
+                        this.dataList = res.data.data.rows;
+                        this.pagination.total = res.data.data.total;
+                    }else {
+                        this.$message.error(res.data.message);
+                    }
+                })
             },
             // 重置表单
             resetForm() {
@@ -318,7 +342,7 @@
                 this.formData = {};
                 this.activeName = 'first';
                 //清除上次勾选信息
-                this.checkutemIds = [];
+                this.checkitemIds = [];
             },
             // 弹出添加窗口
             handleCreate() {
@@ -339,9 +363,37 @@
             },
             // 弹出编辑窗口
             handleUpdate(row) {
+                // alert(row.id);
+                //发送请求根据id查询检查组用于数据的回显
+                axios.get('/checkgroup/findById.do?id=' + row.id).then((res)=>{
+                    if (res.data.flag){
+                        //弹出编辑窗口
+                        this.dialogFormVisible4Edit = true;
+                        //默认选中第一个标签页
+                        this.activeName = 'first';
+                        //为模型赋值 通过数据绑定回显
+                        this.formData = res.data.data;
+                        //发送请求查询检查项的信息,用于表格展示
+                        axios.get("/checkitem/findAll.do").then((res)=>{
+                            if (res.data.flag){
+                                this.tableData = res.data.data;
+                                //查询当前检查组包含的所有检查项id,用于复选框回显
+                                axios.get('ceheckgroup/findCheckItemIdsByCheckGroupId.do?id=' + row.id).then((res)=>{
+                                  this.checkitemIds = res.data;
+                                });
+                            }else {
+                                this.$message.error(res.data.message);
+                            }
+                        });
+                    }else {
+                        this.$message.error(res.data.message);
+                    }
+                })
             },
             //切换页码
             handleCurrentChange(currentPage) {
+                this.pagination.currentPage = currentPage;
+                this.findPage();
             },
             // 删除
             handleDelete(row) {

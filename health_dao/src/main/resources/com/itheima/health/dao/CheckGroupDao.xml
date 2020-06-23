@@ -3,16 +3,43 @@
 <mapper namespace="com.itheima.health.dao.CheckGroupDao">
 
     <!--    新增检查组-->
-    <insert id="add" parameterType="checkgroup">
-    <selectKey resultType="int" order="AFTER" keyProperty="id" >
-        select last_insert_id()
-    </selectKey>
+    <insert id="add" parameterType="com.itheima.health.pojo.CheckGroup">
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
         insert into t_checkgroup (code,name,helpCode,sex,remark,attention)
         values (#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
     </insert>
 
     <!--    新增t_checkgroup_checkitem 关系表-->
-    <insert id="addChenkItemCheckGroup">
+    <insert id="addCheckItemCheckGroup">
         insert into t_checkgroup_checkitem (checkgroup_id,checkitem_id) values (#{checkGroupId},#{checkitemId})
     </insert>
+
+    <update id="edit" parameterType="com.itheima.health.pojo.CheckGroup">
+        update t_checkgroup set code = #{code},name = #{name},helpCode = #{helpCode},sex=#{sex},remark = #{remark},attention = #{attention} where id = #{id}
+    </update>
+
+    <update id="setCheckGroupAndCheckItem" parameterType="map">
+        insert into t_checkgroup_checkitem set (checkgroup_id,checkitem_id) values (#{checkgroup_if},#{checkitem_id})
+    </update>
+
+    <delete id="deleteAssociation" parameterType="int">
+        delete from t_checkgroup_checkitem where checkgroup_id = #{id}
+    </delete>
+
+    <!--    分页查询-->
+    <select id="findByCondition" resultType="com.itheima.health.pojo.CheckGroup" parameterType="string">
+        select * from t_checkgroup
+        <if test="value != null and value.length > 0">
+            where code like #{value} or name like #{value} or helpCode like #{value}
+        </if>
+    </select>
+    <select id="findById" resultType="com.itheima.health.pojo.CheckGroup">
+        select * from t_checkgroup where id = #{id}
+    </select>
+    <!--    查询检查组关联的检查项的Id-->
+    <select id="findCheckItemIdsByCheckGroupId" resultType="java.lang.Integer">
+        select checkitem_id from t_ceheckgroup_checkitem where checkgroup_id = #{id};
+    </select>
 </mapper>

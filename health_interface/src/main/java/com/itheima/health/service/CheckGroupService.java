@@ -1,7 +1,11 @@
 package com.itheima.health.service;
 
+import com.itheima.health.entity.PageResult;
+import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
 import com.itheima.health.pojo.CheckGroup;
+
+import java.util.List;
 
 /**
  * @Author Tian Qing
@@ -10,4 +14,12 @@ import com.itheima.health.pojo.CheckGroup;
 public interface CheckGroupService {
 
     public void add(CheckGroup checkGroup, Integer[] checkitemIds);
+
+    public PageResult<CheckGroup> findPage(QueryPageBean queryPageBean);
+
+    public CheckGroup findById(Integer id);
+
+    public List<Integer> findCheckItemIdsByCheckGroupId(Integer id);
+
+    public void edit(CheckGroup checkGroup, Integer[] ids);
 }

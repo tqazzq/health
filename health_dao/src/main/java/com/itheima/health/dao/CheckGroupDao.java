@@ -1,7 +1,11 @@
 package com.itheima.health.dao;
 
+import com.github.pagehelper.Page;
 import com.itheima.health.pojo.CheckGroup;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Tian Qing
@@ -9,9 +13,20 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface CheckGroupDao {
 
-
-    void add(CheckGroup checkGroup);
+    public void add(CheckGroup checkGroup);
 
     //两个参数类型相同 要取别名不然分辨不出来
-    void addChenkItemCheckGroup(@Param("checkGroupId") Integer checkGroupId,@Param("checkitemId") Integer checkitemId);
+    public void addCheckItemCheckGroup(@Param("checkGroupId") Integer checkGroupId, @Param("checkitemId") Integer checkitemId);
+
+    public Page<CheckGroup> findByCondition(String queryString);
+
+    public CheckGroup findById(Integer id);
+
+    public List<Integer> findCheckItemIdsByCheckGroupId(Integer id);
+
+    public void edit(CheckGroup checkGroup);
+
+    public void deleteAssociation(Integer id);
+
+    public void setCheckGroupAndCheckItem(Map<String, Integer> map);
 }
