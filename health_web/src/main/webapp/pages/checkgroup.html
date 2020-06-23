@@ -293,31 +293,21 @@
             },
             //添加
             handleAdd() {
-                //校验表单输入是否合法
-                this.$refs['dataAddForm'].validate((vaild) => {
-                    if (vaild) {
-                        //表达数据验证通过发送axios请求
-                        axios.post("/checkitem/add.do", this.formData).then(res => {
-                            //隐藏窗口
-                            this.dialogFormVisible = false;
-                            //判断后台返回的flag的值是true还是false并做相应的提示
-                            if (res.data.flag) {
-                                this.$message({
-                                    message: 'res.data.message',
-                                    type: 'success'
-                                });
-                            } else {
-                                this.$message.error(res.data.message);
-                            }
-                        }).finally(() => {
-                            //刷新数据列表
-                            this.findPage();
-                        });
-                    } else {
-                        this.$message.error("表单校验数据失败");
-                        return false;
+                //提交检查组的信息和选中的id的信息
+                axios.post('/checkgroup/add.do?checkitemIds=' + this.checkitemIds, this.formData).then((res) => {
+                    // 先提示成功或者失败再关闭窗口
+                    this.$message({
+                         message: res.data.message,
+                         type: res.data.flag? "success":"error"
+                     });
+                    if (res.data.flag){
+                        //关闭窗口
+                        this.dialogFormVisible = false;
+                        //刷新检查组分页数据列表
+                        this.findPage();
                     }
-                });
+                })
+
             },
             //分页查询
             findPage() {
