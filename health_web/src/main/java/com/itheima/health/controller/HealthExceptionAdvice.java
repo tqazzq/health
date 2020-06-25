@@ -16,7 +16,7 @@ public class HealthExceptionAdvice {
      *
      * */
     @ExceptionHandler(HealthException.class)
-    public Result handleHealException(HealthException he) {
+    public Result handleHealthException(HealthException he) {
         return new Result(false, he.getMessage());
     }
 
@@ -25,7 +25,6 @@ public class HealthExceptionAdvice {
      * */
     @ExceptionHandler(Exception.class)
     public Result handleException(Exception he) {
-        he.printStackTrace();
         return new Result(false, "网络繁忙");
     }
 }

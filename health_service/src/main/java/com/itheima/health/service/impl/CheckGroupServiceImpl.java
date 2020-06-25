@@ -4,17 +4,17 @@ import com.alibaba.druid.util.StringUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.itheima.health.constant.MessageConstant;
 import com.itheima.health.dao.CheckGroupDao;
 import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
+import com.itheima.health.exception.HealthException;
 import com.itheima.health.pojo.CheckGroup;
 import com.itheima.health.service.CheckGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Tian Qing
@@ -73,24 +73,44 @@ public class CheckGroupServiceImpl implements CheckGroupService {
     @Override
     //修改检查组的信息 同事还要更新和检查项的关联表
     @Transactional
-    public void edit(CheckGroup checkGroup, Integer[] ids) {
+    public void edit(CheckGroup checkGroup, Integer[] checkitemIds) {
         //根据检查组Id清理原来关联表中检查组和检查项的关系
         checkGroupDao.deleteAssociation(checkGroup.getId());
         //向关联表插入数据(建立新的关联关系)
-        setCheckGroupAndCheckItem(checkGroup.getId(), ids);
+        if (null != checkitemIds){
+            for (Integer checkitemId : checkitemIds) {
+                checkGroupDao.setCheckGroupAndCheckItem(checkGroup.getId(), checkitemId);
+            }
+        }
         //更新检查组的基本信息
         checkGroupDao.edit(checkGroup);
     }
 
-    //向关联表插入数据 建立新的关联关系
-    private void setCheckGroupAndCheckItem(Integer id, Integer[] ids) {
-        if (ids != null){
-            for (Integer checkitemId : ids) {
-                Map<String,Integer> map = new HashMap<>();
-                map.put("checkgroup_id",id);
-                map.put("checkitem_id",checkitemId);
-                checkGroupDao.setCheckGroupAndCheckItem(map);
-            }
+    @Override
+    //删除检查组
+    @Transactional
+    public void deleteById(Integer id) {
+        //删除检查组之前要先查看他有没有被套餐使用 ,如果已经在使用中了则不能删除,会导致业务的错乱 付款不正确等
+        int count = checkGroupDao.findSetmealCountByCheckGroupId(id);
+        //被使用了抛出异常
+        if (count > 0){
+            throw new HealthException(MessageConstant.DELETE_CHECKGROUP_IN_USE);
         }
+        //没有使用则先删除检查组与检查项的关系
+        checkGroupDao.deleteCheckGroupCheckItem(id);
+        //最后删除检查组
+        checkGroupDao.deleteById(id);
     }
+
+    //向关联表插入数据 建立新的关联关系
+//    private void setCheckGroupAndCheckItem(Integer checkGroupId, Integer[] checkitemIds) {
+//        if (checkitemIds != null){
+//            for (Integer checkitemId : checkitemIds) {
+//                Map<String,Integer> map = new HashMap<>();
+//                map.put("checkgroup_id",checkGroupId);
+//                map.put("checkitem_id",checkitemId);
+//                checkGroupDao.setCheckGroupAndCheckItem(map);
+//            }
+//        }
+//    }
 }

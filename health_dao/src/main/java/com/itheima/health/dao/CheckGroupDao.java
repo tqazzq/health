@@ -28,5 +28,11 @@ public interface CheckGroupDao {
 
     public void deleteAssociation(Integer id);
 
-    public void setCheckGroupAndCheckItem(Map<String, Integer> map);
+    public void setCheckGroupAndCheckItem(@Param("id") Integer id, @Param("checkitemId") Integer checkitemId);
+
+    public void deleteById(Integer id);
+
+    public Integer findSetmealCountByCheckGroupId(Integer id);
+
+    public void deleteCheckGroupCheckItem(Integer id);
 }

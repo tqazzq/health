@@ -7,10 +7,7 @@ import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
 import com.itheima.health.pojo.CheckGroup;
 import com.itheima.health.service.CheckGroupService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,43 +23,50 @@ public class CheckGroupController {
     private CheckGroupService checkGroupService;
 
     @PostMapping("/add")
-    public Result add(@RequestBody CheckGroup checkGroup,Integer[] checkitemIds){
-        checkGroupService.add(checkGroup,checkitemIds);
+    public Result add(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
+        checkGroupService.add(checkGroup, checkitemIds);
         return new Result(true, MessageConstant.ADD_CHECKGROUP_SUCCESS);
     }
 
     //分页查询检查组
     @PostMapping("/findPage")
-    public Result findPage(@RequestBody QueryPageBean queryPageBean){
-        PageResult<CheckGroup> pageResult =  checkGroupService.findPage(queryPageBean);
-        return new Result(true,MessageConstant.QUERY_CHECKGROUP_SUCCESS,pageResult);
+    public Result findPage(@RequestBody QueryPageBean queryPageBean) {
+        PageResult<CheckGroup> pageResult = checkGroupService.findPage(queryPageBean);
+        return new Result(true, MessageConstant.QUERY_CHECKGROUP_SUCCESS, pageResult);
     }
 
     //根据Id查询
     @RequestMapping("/findById")
-    public Result findById(Integer id){
+    public Result findById(Integer id) {
         CheckGroup checkGroup = checkGroupService.findById(id);
-        if (checkGroup != null){
-            return new Result(true,MessageConstant.QUERY_CHECKGROUP_SUCCESS,checkGroup);
+        if (checkGroup != null) {
+            return new Result(true, MessageConstant.QUERY_CHECKGROUP_SUCCESS, checkGroup);
         }
-        return new Result(false,MessageConstant.QUERY_CHECKGROUP_FAIL);
+        return new Result(false, MessageConstant.QUERY_CHECKGROUP_FAIL);
     }
 
     //查询改检查组包含的所有检查项id
     @RequestMapping("/findCheckItemIdsByCheckGroupId")
-    public List<Integer> findCheckItemIdsByCheckGroupId(Integer id){
+    public Result findCheckItemIdsByCheckGroupId(Integer id) {
         List<Integer> list = checkGroupService.findCheckItemIdsByCheckGroupId(id);
-        return list;
+        return new Result(true, MessageConstant.QUERY_CHECKITEM_SUCCESS, list);
     }
 
     //发送请求提交数据模型 修改检查组
     @PostMapping("/edit")
-    public Result edit(@RequestBody CheckGroup checkGroup,Integer[] ids){
+    public Result edit(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
         try {
-            checkGroupService.edit(checkGroup,ids);
+            checkGroupService.edit(checkGroup, checkitemIds);
         } catch (Exception e) {
-            return new Result(false,MessageConstant.EDIT_CHECKGROUP_FAIL);
+            return new Result(false, MessageConstant.EDIT_CHECKGROUP_FAIL);
         }
-        return new Result(true,MessageConstant.EDIT_CHECKITEM_SUCCESS);
+        return new Result(true, MessageConstant.EDIT_CHECKITEM_SUCCESS);
+    }
+
+    //删除检查组
+    @RequestMapping("/deleteById")
+    public Result deleteById(Integer id){
+        checkGroupService.deleteById(id);
+        return new Result(true,MessageConstant.DELETE_CHECKGROUP_SUCCESS);
     }
 }

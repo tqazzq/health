@@ -292,17 +292,17 @@
             //编辑
             handleEdit() {
                 //发送请求  提交数据模型
-                axios.post('/checkgroup/edit.do?checkitemIds=' + this.checkitemIds,this.formData).then((res)=>{
+                axios.post('/checkgroup/edit.do?checkitemIds=' + this.checkitemIds, this.formData).then((res) => {
                     this.dialogFormVisible4Edit = false;
-                    if (res.data.flag){
+                    if (res.data.flag) {
                         this.$message({
-                             message: res.data.message,
-                             type: 'success'
-                         });
-                    }else {
+                            message: res.data.message,
+                            type: 'success'
+                        });
+                    } else {
                         this.$message.error(res.data.message);
                     }
-                }).finally(()=>{
+                }).finally(() => {
                     //刷新页面
                     this.findPage();
                 })
@@ -313,10 +313,10 @@
                 axios.post('/checkgroup/add.do?checkitemIds=' + this.checkitemIds, this.formData).then((res) => {
                     // 先提示成功或者失败再关闭窗口
                     this.$message({
-                         message: res.data.message,
-                         type: res.data.flag? "success":"error"
-                     });
-                    if (res.data.flag){
+                        message: res.data.message,
+                        type: res.data.flag ? "success" : "error"
+                    });
+                    if (res.data.flag) {
                         //关闭窗口
                         this.dialogFormVisible = false;
                         //刷新检查组分页数据列表
@@ -327,11 +327,11 @@
             },
             //分页查询
             findPage() {
-                axios.post('/checkgroup/findPage.do',this.pagination).then((res)=>{
-                    if (res.data.flag){
+                axios.post('/checkgroup/findPage.do', this.pagination).then((res) => {
+                    if (res.data.flag) {
                         this.dataList = res.data.data.rows;
                         this.pagination.total = res.data.data.total;
-                    }else {
+                    } else {
                         this.$message.error(res.data.message);
                     }
                 })
@@ -365,8 +365,8 @@
             handleUpdate(row) {
                 // alert(row.id);
                 //发送请求根据id查询检查组用于数据的回显
-                axios.get('/checkgroup/findById.do?id=' + row.id).then((res)=>{
-                    if (res.data.flag){
+                axios.get('/checkgroup/findById.do?id=' + row.id).then((res) => {
+                    if (res.data.flag) {
                         //弹出编辑窗口
                         this.dialogFormVisible4Edit = true;
                         //默认选中第一个标签页
@@ -374,18 +374,22 @@
                         //为模型赋值 通过数据绑定回显
                         this.formData = res.data.data;
                         //发送请求查询检查项的信息,用于表格展示
-                        axios.get("/checkitem/findAll.do").then((res)=>{
-                            if (res.data.flag){
-                                this.tableData = res.data.data;
-                                //查询当前检查组包含的所有检查项id,用于复选框回显
-                                axios.get('ceheckgroup/findCheckItemIdsByCheckGroupId.do?id=' + row.id).then((res)=>{
-                                  this.checkitemIds = res.data;
+                        axios.get("/checkitem/findAll.do").then((resp) => {
+                            if (resp.data.flag) {
+                                this.tableData = resp.data.data;
+                                //查询当前检查组包含的所有检查项id,用于复选框回显勾选
+                                axios.get('/checkgroup/findCheckItemIdsByCheckGroupId.do?id=' + row.id).then((response) => {
+                                    if (response.data.flag) {
+                                        this.checkitemIds = response.data.data;
+                                    } else {
+                                        this.$message.error(response.data.message);
+                                    }
                                 });
-                            }else {
-                                this.$message.error(res.data.message);
+                            } else {
+                                this.$message.error(response.data.message);
                             }
                         });
-                    }else {
+                    } else {
                         this.$message.error(res.data.message);
                     }
                 })
@@ -397,6 +401,30 @@
             },
             // 删除
             handleDelete(row) {
+                //获取删除的id
+                var id = row.id;
+                //防呆提醒
+                this.$confirm('此操作将【永久删除】该检查组, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        // 点击确定后调用
+                        axios.post('/checkgroup/deleteById.do?id=' + id).then(res=>{
+                            this.$message({
+                                message: res.data.message,
+                                type: res.data.flag?"success":"error"
+                            })
+                            if(res.data.flag){
+                                // 成功
+                                // 刷新列表数据
+                                this.findPage();
+                            }
+                        })
+                    }).catch(() => {
+                        // 点击取消后调用
+                        // 空着，防止报错
+                    });
             }
         }
     })
