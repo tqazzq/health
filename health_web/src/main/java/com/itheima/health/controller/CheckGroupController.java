@@ -65,8 +65,15 @@ public class CheckGroupController {
 
     //删除检查组
     @RequestMapping("/deleteById")
-    public Result deleteById(Integer id){
+    public Result deleteById(Integer id) {
         checkGroupService.deleteById(id);
-        return new Result(true,MessageConstant.DELETE_CHECKGROUP_SUCCESS);
+        return new Result(true, MessageConstant.DELETE_CHECKGROUP_SUCCESS);
+    }
+
+    //查询所有
+    @RequestMapping("/findAll")
+    public Result findAll() {
+        List<CheckGroup> checkGroupList = checkGroupService.findAll();
+        return new Result(true, MessageConstant.QUERY_CHECKGROUP_SUCCESS,checkGroupList);
     }
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.SetmealDao">
+    <!--    添加套餐-->
+    <insert id="add" parameterType="com.itheima.health.pojo.Setmeal">
+        insert into t_setmeal (name,code,helpCode,sex,age,price,remark,attention,img)
+        values(#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--    添加套餐和检查组的关系表-->
+    <insert id="addSetmealCheckGroup">
+        insert into t_setmeal_checkgroup(setmeal_id,checkgroup_id) values (#{setmealId},#{checkgroupId})
+    </insert>
+    <update id="update" parameterType="com.itheima.health.pojo.Setmeal">
+        update t_setmeal set name=#{name},code=#{code},helpCode=#{helpCode},sex=#{sex},age=#{age},price=#{price},remark=#{remark},attention=#{attention},img=#{img} where id = #{id}
+
+    </update>
+    <!--    根据套餐Id删除套餐与检查组的id关系列-->
+    <delete id="deleteSetmealCheckGroup" parameterType="int">
+        delete from t_setmeal_checkgroup where setmeal_id = #{id}
+    </delete>
+    <delete id="deleteSetmeal" parameterType="int">
+        delete from t_setmeal where id = #{id}
+    </delete>
+    <!--    分页查询-->
+    <select id="findByCondition" resultType="com.itheima.health.pojo.Setmeal">
+        select * from t_setmeal
+        <if test="_parameter != null and _parameter.length > 0 ">
+            where code like #{queryString} or name like #{queryString} or helpCode like #{queryString}
+        </if>
+    </select>
+    <select id="findById" resultType="com.itheima.health.pojo.Setmeal" parameterType="int">
+        select  * from t_setmeal where id = #{id}
+    </select>
+    <select id="findCheckgroupIdsBySetmealId" parameterType="int" resultType="int">
+        select checkgroup_id from t_setmeal_checkgroup where setmeal_id = #{id}
+    </select>
+    <select id="findOrderCountBySetmealId" resultType="java.lang.Integer">
+        select count(1) from t_order  where setmeal_id = #{id}
+    </select>
+</mapper>

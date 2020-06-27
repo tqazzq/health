@@ -29,7 +29,7 @@
         <div class="box">
             <div class="filter-container">
                 <el-input placeholder="项目编码/项目名称" v-model="pagination.queryString" style="width: 200px;"
-                          class="filter-item"></el-input>
+                          class="filter-item" @keyup.enter.native="handleCurrentChange(1)"></el-input>
                 <el-button @click="handleCurrentChange(1)" class="dalfBut">查询</el-button>
                 <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
             </div>

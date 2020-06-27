@@ -77,7 +77,7 @@ public class CheckGroupServiceImpl implements CheckGroupService {
         //根据检查组Id清理原来关联表中检查组和检查项的关系
         checkGroupDao.deleteAssociation(checkGroup.getId());
         //向关联表插入数据(建立新的关联关系)
-        if (null != checkitemIds){
+        if (null != checkitemIds) {
             for (Integer checkitemId : checkitemIds) {
                 checkGroupDao.setCheckGroupAndCheckItem(checkGroup.getId(), checkitemId);
             }
@@ -93,13 +93,20 @@ public class CheckGroupServiceImpl implements CheckGroupService {
         //删除检查组之前要先查看他有没有被套餐使用 ,如果已经在使用中了则不能删除,会导致业务的错乱 付款不正确等
         int count = checkGroupDao.findSetmealCountByCheckGroupId(id);
         //被使用了抛出异常
-        if (count > 0){
+        if (count > 0) {
             throw new HealthException(MessageConstant.DELETE_CHECKGROUP_IN_USE);
         }
         //没有使用则先删除检查组与检查项的关系
         checkGroupDao.deleteCheckGroupCheckItem(id);
         //最后删除检查组
         checkGroupDao.deleteById(id);
+    }
+
+    @Override
+    //查询所有检查组 在套餐中显示
+    public List<CheckGroup> findAll() {
+        List<CheckGroup> checkGroupList = checkGroupDao.findAll();
+        return checkGroupList;
     }
 
     //向关联表插入数据 建立新的关联关系

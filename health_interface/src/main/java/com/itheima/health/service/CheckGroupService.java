@@ -2,7 +2,6 @@ package com.itheima.health.service;
 
 import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
-import com.itheima.health.entity.Result;
 import com.itheima.health.exception.HealthException;
 import com.itheima.health.pojo.CheckGroup;
 
@@ -25,4 +24,6 @@ public interface CheckGroupService {
     public void edit(CheckGroup checkGroup, Integer[] checkitemIds);
 
     public void deleteById(Integer id) throws HealthException;
+
+    public List<CheckGroup> findAll();
 }
