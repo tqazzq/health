@@ -34,6 +34,7 @@ public interface MessageConstant {
     static final String IMPORT_ORDERSETTING_SUCCESS = "批量导入预约设置数据成功";
     static final String GET_ORDERSETTING_SUCCESS = "获取预约设置数据成功";
     static final String GET_ORDERSETTING_FAIL = "获取预约设置数据失败";
+    static final String GET_ORDERSETTING_NONE = "暂无数据";
     static final String ORDERSETTING_SUCCESS = "预约设置成功";
     static final String ORDERSETTING_FAIL = "预约设置失败";
     static final String ADD_MEMBER_FAIL = "新增会员失败";

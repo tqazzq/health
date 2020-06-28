@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+<!--    &lt;!&ndash;    自定义的类注册到spring容器&ndash;&gt;-->
+<!--    <context:component-scan base-package="com.itheima.health.job"/>-->
+<!--    &lt;!&ndash;任务策略&ndash;&gt;-->
+<!--    <bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+<!--        <property name="targetObject" ref="clearImgJob"></property>-->
+<!--        <property name="targetMethod" value="clearImg"></property>-->
+<!--    </bean>-->
+<!--    &lt;!&ndash;    触发器&ndash;&gt;-->
+<!--    <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">-->
+<!--        &lt;!&ndash;        七子表达式 何时出发触发器执行任务策略&ndash;&gt;-->
+<!--        <property name="cronExpression" value="0 /10 * * * ?"/>-->
+<!--        &lt;!&ndash;        要执行的任务策略的id&ndash;&gt;-->
+<!--        <property name="jobDetail" ref="jobDetail"></property>-->
+<!--    </bean>-->
+
+<!--&lt;!&ndash;    调度容器  在这里配置要执行的哪些Trigger&ndash;&gt;-->
+<!--    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">-->
+<!--        <property name="triggers">-->
+<!--            <list>-->
+<!--                <ref bean="trigger"></ref>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+
+        <!--  自定义的类 注册到spring容器  -->
+        <context:component-scan base-package="com.itheima.health.job"/>
+
+        <!--  任务策略  -->
+        <bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+            <property name="targetObject" ref="clearImgJob"/>
+            <property name="targetMethod" value="clearImg"/>
+        </bean>
+        <!--  触发器  -->
+        <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+            <!--  测试      <property name="cronExpression" value="0/30 * * * * ?"/>-->
+            <property name="cronExpression" value="0/30 * * * * ?"/>
+            <property name="jobDetail" ref="jobDetail"/>
+        </bean>
+        <!--  调度容器  -->
+        <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+            <property name="triggers">
+                <list>
+                    <ref bean="trigger"/>
+                </list>
+            </property>
+        </bean>
+    </beans>

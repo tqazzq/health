@@ -5,6 +5,7 @@
          id="WebApp_ID" version="3.0">
 
     <welcome-file-list>
+        <welcome-file>/pages/ordersetting.html</welcome-file>
         <welcome-file>/pages/setmeal.html</welcome-file>
         <welcome-file>/pages/checkgroup.html</welcome-file>
         <welcome-file>/pages/checkitem.html</welcome-file>

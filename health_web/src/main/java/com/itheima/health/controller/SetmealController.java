@@ -2,6 +2,7 @@ package com.itheima.health.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.itheima.health.constant.MessageConstant;
+import com.itheima.health.constant.RedisConstant;
 import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
@@ -12,8 +13,11 @@ import com.sun.org.apache.regexp.internal.RE;
 import com.sun.org.apache.regexp.internal.RESyntaxException;
 import org.aspectj.bridge.Message;
 import org.omg.CORBA.TRANSACTION_MODE;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,6 +35,9 @@ public class SetmealController {
     @Reference
     private SetmealService setmealService;
 
+    @Autowired
+    private JedisPool jedisPool;
+
     //上传图片
     @RequestMapping("/upload")
     public Result upload(MultipartFile imgFile) {
@@ -39,12 +46,18 @@ public class SetmealController {
         String ext = filename.substring(filename.lastIndexOf("."));
         //生成唯一文件名
         String uniqueName = UUID.randomUUID().toString().replace("-", "") + ext;
+        Jedis jedis = jedisPool.getResource();
         //调用工具类上传到七牛
         try {
             QiNiuUtils.uploadViaByte(imgFile.getBytes(), uniqueName);
+            //保存所有上传的图片到redis集合中
+            jedis.sadd(RedisConstant.SETMEAL_PIC_RESOURCES,uniqueName);
         } catch (IOException e) {
             e.printStackTrace();
             return new Result(false, MessageConstant.PIC_UPLOAD_FAIL);
+        }finally {
+            if (null != jedis)
+                jedis.close();
         }
         //成功返回数据给前端
         /*格式如下
@@ -64,7 +77,11 @@ public class SetmealController {
     @PostMapping("/add")
     //添加套餐
     public Result add(@RequestBody Setmeal setmeal, Integer[] checkgroupIds) {
+        Jedis jedis = jedisPool.getResource();
         setmealService.add(setmeal, checkgroupIds);
+        //套餐添加成功,把图片存入redis另一个Key中
+        jedis.sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES,setmeal.getImg());
+        jedis.close();
         return new Result(true, MessageConstant.ADD_SETMEAL_SUCCESS);
     }
 
@@ -96,13 +113,27 @@ public class SetmealController {
     //修改
     @PostMapping("/update")
     public Result update(@RequestBody Setmeal setmeal,Integer[] checkgroupIds){
+        Jedis jedis = jedisPool.getResource();
+        //旧的套餐数据
+        Setmeal oldSetmeal = setmealService.findById(setmeal.getId());
+        //调用业务修改
         setmealService.update(setmeal,checkgroupIds);
+        //从redis中删除旧图片
+        jedis.srem(RedisConstant.SETMEAL_PIC_DB_RESOURCES,oldSetmeal.getImg());
+        //添加新图片即使 是重复图片set集合也不会存入存入重复的图片
+        jedis.sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES,setmeal.getImg());
+        jedis.close();
         return new Result(true,MessageConstant.EDIT_SETMEAL_SUCCESS);
     }
 
     @GetMapping("/delete")
     public Result delete(Integer id){
+        //查询要删除的套餐图片的名称
+        Setmeal setmeal = setmealService.findById(id);
         setmealService.delete(id);
+        Jedis jedis = jedisPool.getResource();
+        //从redis中删除旧图片
+        jedis.srem(RedisConstant.SETMEAL_PIC_DB_RESOURCES,setmeal.getImg());
         return new Result(true, MessageConstant.DELETE_CHECKGROUP_SUCCESS);
     }
 }
