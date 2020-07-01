@@ -11,10 +11,17 @@ import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.exception.HealthException;
 import com.itheima.health.pojo.Setmeal;
 import com.itheima.health.service.SetmealService;
+import com.itheima.health.utils.QiNiuUtils;
+import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Tian Qing
@@ -24,8 +31,13 @@ import java.util.List;
 public class SetmealServiceImpl implements SetmealService {
     @Autowired
     private SetmealDao setmealDao;
+    @Autowired
+    private FreeMarkerConfigurer freeMarkerConfigurer;
+    @Value("${out_put_path}")
+    private String out_put_path;
 
     @Override
+    @Transactional
     public void add(Setmeal setmeal, Integer[] checkgroupIds) {
         setmealDao.add(setmeal);
         //获取套餐的id
@@ -36,6 +48,74 @@ public class SetmealServiceImpl implements SetmealService {
                 setmealDao.addSetmealCheckGroup(setmealId, checkgroupId);
             }
         }
+        //新增套餐后重新生成静态页面
+        generateMobileStaticHtml();
+    }
+
+    /**
+     * 调用方法生成静态页面
+     */
+    private void generateMobileStaticHtml() {
+        try {
+            //套餐列表静态页面
+            generateSetmealListHtml();
+            //套餐详情静态页面
+            generateSetmealDetailHtml();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //静态详情页面生成所有的静态详情页面(测试)
+    }
+
+    private void generateSetmealDetailHtml() throws Exception {
+        //获取模板套餐列表模板
+        Template template = freeMarkerConfigurer.getConfiguration().getTemplate("moblie_setmeal.ftl");
+        //获取数据模型
+        List<Setmeal> setmealList = setmealDao.findAll();
+        //图片地址
+        setmealList.forEach(s ->{
+            s.setImg(QiNiuUtils.DOMAIN + s.getImg());
+        });
+        //map集合存入数据
+        Map<String,Object> map = new HashMap<>();
+        map.put("setmealList",setmealList);
+        //获取文件地址
+        File setmealListFile = new File(out_put_path, "m_setmeal.html");
+        //输入
+        template.process(map,new BufferedWriter(new OutputStreamWriter(new FileOutputStream(setmealListFile),"utf-8")));
+    }
+
+    /**
+     * 查询所有的检查组检查项生成静态页面
+     */
+    private void generateSetmealListHtml() throws Exception {
+        // 把所有套餐都生成详情页面 方便测试
+        List<Setmeal> list = setmealDao.findAll();
+        // setmealList中的套餐是没有详情信息，即没有检查组也没有检查项的信息，要查询一遍
+        for (Setmeal setmeal : list) {
+            // 获取套餐详情
+            Setmeal setmealDatil = setmealDao.findById(setmeal.getId());
+            // 设置套餐的图片路径
+            setmealDatil.setImg(QiNiuUtils.DOMAIN + setmealDatil.getImg());
+            // 生成详情页面
+            generateDetailHtml(setmealDatil);
+        }
+
+    }
+
+    /**
+     * 调用方法生成具体的套餐静态页面
+     *
+     * @param setmealDatil
+     */
+    private void generateDetailHtml(Setmeal setmealDatil) throws Exception {
+//        获取模板套餐列表的模板
+        Template template = freeMarkerConfigurer.getConfiguration().getTemplate("moblie_setmeal_detail.ftl");
+        //初始化一个集合用于存贮套餐对象
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("setmeal", setmealDatil);
+        File setmealDatailFile = new File(out_put_path, "setmeal_" + setmealDatil.getId() + ".html");
+        template.process(dataMap, new BufferedWriter(new OutputStreamWriter(new FileOutputStream(setmealDatailFile), "utf-8")));
     }
 
     @Override
@@ -77,6 +157,7 @@ public class SetmealServiceImpl implements SetmealService {
                 setmealDao.addSetmealCheckGroup(setmeal.getId(), checkgroupId);
             }
         }
+        generateMobileStaticHtml();
     }
 
     @Override
@@ -91,5 +172,18 @@ public class SetmealServiceImpl implements SetmealService {
         setmealDao.deleteSetmealCheckGroup(id);
         setmealDao.deleteSetmeal(id);
     }
+
+    @Override
+    public List<Setmeal> findAll() {
+        //新增套餐后重新生成静态页面
+//        generateMobileStaticHtml(); 为了方便测试生成静态页面 新加的方法
+        return setmealDao.findAll();
+    }
+
+    @Override
+    public Setmeal findDetailById(Integer id) {
+        return setmealDao.findByDetailById(id);
+    }
+
 
 }

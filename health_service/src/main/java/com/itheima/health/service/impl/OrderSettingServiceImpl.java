@@ -22,6 +22,7 @@ public class OrderSettingServiceImpl implements OrderSettingService {
     @Autowired
     private OrderSettingDao orderSettingDao;
 
+
     @Override
     @Transactional
     public void add(ArrayList<OrderSetting> orderSettingList) {

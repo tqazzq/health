@@ -473,7 +473,7 @@
                             if (resp.data.flag) {
                                 this.tableData = resp.data.data;
                                 //再次发送请求查找选中的检查组Id
-                                axios.get('setmeal/findCheckgroupIdsBySetmealId.do?id=' + id).then(response => {
+                                axios.get('/setmeal/findCheckgroupIdsBySetmealId.do?id=' + id).then(response => {
                                     if (response.data.flag) {
                                         this.checkgroupIds = response.data.data;
                                     } else {

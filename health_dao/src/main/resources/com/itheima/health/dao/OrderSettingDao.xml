@@ -7,6 +7,10 @@
     <update id="updateNumber" parameterType="com.itheima.health.pojo.OrderSetting">
         update t_ordersetting set number = #{number} where orderDate = #{orderDate}
     </update>
+    <update id="editReservationsByOrderDate" parameterType="date">
+        update t_ordersetting set reservations = reservations + 1 where orderDate = #{orderSettingDate}
+    </update>
+
 
     <select id="findByorderSettingDate" parameterType="date" resultType="com.itheima.health.pojo.OrderSetting">
         select * from t_ordersetting where orderDate = #{orderDate}

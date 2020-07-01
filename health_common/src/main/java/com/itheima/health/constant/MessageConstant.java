@@ -53,7 +53,9 @@ public interface MessageConstant {
     static final String QUERY_SETMEAL_SUCCESS = "查询套餐数据成功";
     static final String QUERY_SETMEAL_FAIL = "查询套餐数据失败";
     static final String SEND_VALIDATECODE_FAIL = "验证码发送失败";
+    static final String SENT_VALIDATECODE = "验证码已发送请查看短信或手机号是否正确";
     static final String SEND_VALIDATECODE_SUCCESS = "验证码发送成功";
+    static final String SEND_VALIDATECODE_NONE = "验证码不存在请重新发送";
     static final String SELECTED_DATE_CANNOT_ORDER = "所选日期不能进行体检预约";
     static final String ORDER_FULL = "预约已满";
     static final String HAS_ORDERED = "已经完成预约，不能重复预约";

@@ -30,4 +30,8 @@ public interface SetmealDao {
     int findOrderCountBySetmealId(Integer id);
 
     void deleteSetmeal(Integer id);
+
+    List<Setmeal> findAll();
+
+    Setmeal findByDetailById(Integer id);
 }

@@ -29,7 +29,7 @@
     <div class="contentBox">
         <div class="card">
             <div class="project-img">
-                <img :src="imgUrl" width="100%" height="100%" />
+                <img :src="setmeal.img" width="100%" height="100%" />
             </div>
             <div class="project-text">
                 <h4 class="tit">{{setmeal.name}}</h4>
@@ -56,18 +56,18 @@
                 <div class="table-title">
                     <div class="tit-item flex2">项目名称</div>
                     <div class="tit-item  flex3">项目内容</div>
-                    <div class="tit-item  flex3">项目解读</div>
+                    <div class="tit-item  flex3" >项目解读</div>
                 </div>
                 <div class="table-content">
                     <ul class="table-list">
                         <li class="table-item" v-for="checkgroup in setmeal.checkGroups">
-                            <div class="item flex2">{{checkgroup.name}}</div>
-                            <div class="item flex3">
-                                <label v-for="checkitem in checkgroup.checkItems">
+                            <div class="item flex2" align="center">{{checkgroup.name}}</div>
+                            <div class="item flex3" align="center">
+                                <label v-for="checkitem in checkgroup.checkItems" >
                                     {{checkitem.name}}
                                 </label>
                             </div>
-                            <div class="item flex3">{{checkgroup.remark}}</div>
+                            <div class="item flex3" align="center">{{checkgroup.remark}}</div>
                         </li>
                     </ul>
                 </div>
@@ -91,10 +91,9 @@
             }
         },
         mounted(){
-            axios.post("/setmeal/findById.do?id=" + id).then((response) => {
+            axios.get("/setmeal/findDetailById.do?id=" + id).then((response) => {
                 if(response.data.flag){
                     this.setmeal = response.data.data;
-                    this.imgUrl = 'http://pqjroc654.bkt.clouddn.com/' + this.setmeal.img;
                 }
             });
         }

@@ -41,4 +41,41 @@
     <select id="findOrderCountBySetmealId" resultType="java.lang.Integer">
         select count(1) from t_order  where setmeal_id = #{id}
     </select>
+    <select id="findAll" resultType="com.itheima.health.pojo.Setmeal">
+        select * from t_setmeal
+    </select>
+    <select id="findByDetailById" resultMap="setmealDetailMap" parameterType="int">
+        select
+        s.*,
+        sg.checkgroup_id,cg.name as checkgroup_name,cg.remark as checkgroup_remark,
+        cc.checkitem_id, ci.name as checkitem_name
+        from
+        t_setmeal  s,t_setmeal_checkgroup sg,
+        t_checkgroup cg,t_checkgroup_checkitem cc,
+        t_checkitem ci
+        where
+        s.id = sg.setmeal_id and cg.id = sg.checkgroup_id and
+        cg.id = cc.checkgroup_id and ci.id = cc.checkitem_id and s.id = #{id}
+    </select>
+    <resultMap id="setmealDetailMap" type="com.itheima.health.pojo.Setmeal">
+        <id property="id" column="id"/>
+        <result property="name" column="name" />
+        <result property="code" column="code" />
+        <result property="helpCode" column="helpCode" />
+        <result property="sex" column="sex" />
+        <result property="age" column="age" />
+        <result property="price" column="price" />
+        <result property="remark" column="remark" />
+        <result property="attention" column="attention" />
+        <result property="img" column="img" />
+        <collection property="checkGroups" ofType="com.itheima.health.pojo.CheckGroup">
+            <id property="id" column="checkgroup_id"/>
+            <result property="name" column="checkgroup_name"/>
+            <result property="remark" column="checkgroup_remark"/>
+            <collection property="checkItems" ofType="com.itheima.health.pojo.CheckItem">
+                <id property="id" column="checkitem_id"/>
+                <result property="name" column="checkitem_name"/>
+            </collection>
+        </collection>
+    </resultMap>
 </mapper>

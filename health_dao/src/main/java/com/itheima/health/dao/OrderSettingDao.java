@@ -20,4 +20,6 @@ public interface OrderSettingDao {
     void add(OrderSetting orderSetting);
 
     List<Map<String, Integer>> getOrderSettingByMonth(@Param("dateBegin") String dateBegin, @Param("dateEnd") String dateEnd);
+
+    void editReservationsByOrderDate(Date orderSettingDate);
 }

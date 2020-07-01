@@ -15,4 +15,6 @@
     <!--批量扫描，发布服务-->
     <dubbo:annotation package="com.itheima.health.service"/>
     <import resource="classpath:applicatipnContext-tx.xml"/>
+    <!--    导入freework-->
+    <import resource="classpath:applicationContext-freemarker.xml"/>
 </beans>

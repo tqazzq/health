@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.MemberDao">
+    <insert id="addMember" parameterType="com.itheima.health.pojo.Member">
+        insert into t_member (name,sex,idCard,phoneNumber,regTime) values
+        (#{name},#{sex},#{idCard},#{phoneNumber},#{regTime})
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+    <select id="findByTelephone" resultType="com.itheima.health.pojo.Member" parameterType="string">
+        select * from t_member where phoneNumber = #{telephone}
+    </select>
+    <select id="findOrderByMemberOrder" resultType="com.itheima.health.pojo.Order"
+            parameterType="com.itheima.health.pojo.Order">
+        select * from t_order
+        <where>
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="memberId != null">
+                and member_id = #{memberId}
+            </if>
+            <if test="orderDate != null">
+                and orderDate = #{orderDate}
+            </if>
+            <if test="orderType != null">
+                and orderType = #{orderType}
+            </if>
+            <if test="orderStatus != null">
+                and orderStatus = #{orderStatus}
+            </if>
+            <if test="setmealId != null">
+                and setmeal_id = #{setmealId}
+            </if>
+        </where>
+    </select>
+</mapper>

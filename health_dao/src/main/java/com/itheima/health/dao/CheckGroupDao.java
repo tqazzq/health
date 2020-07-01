@@ -5,7 +5,6 @@ import com.itheima.health.pojo.CheckGroup;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Tian Qing

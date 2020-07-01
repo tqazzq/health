@@ -23,4 +23,8 @@ public interface SetmealService {
     void update(Setmeal setmeal, Integer[] checkgroupIds);
 
     void delete(Integer id) throws HealthException;
+
+    List<Setmeal> findAll();
+
+    Setmeal findDetailById(Integer id);
 }
