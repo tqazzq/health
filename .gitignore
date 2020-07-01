@@ -3,3 +3,11 @@ workspace.xml
 compiler.xml
 misc.xml
 .idea
+.iml
+.idea
+.gitignore
+.sh
+.classpath
+.project
+*.settings
+target;logs
