@@ -11,3 +11,4 @@ misc.xml
 .project
 *.settings
 target;logs
+*.iml
