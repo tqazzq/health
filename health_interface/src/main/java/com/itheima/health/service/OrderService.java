@@ -11,4 +11,6 @@ import java.util.Map;
  */
 public interface OrderService {
     Order submit(Map<String, Object> orderInfo) throws HealthException;
+
+    Map<String,Object> findById4Detail(Integer id);
 }

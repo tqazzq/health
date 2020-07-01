@@ -46,6 +46,29 @@ public class ValidateCodeController {
             }
         }
         //如果redis中已经存在号码了直接返回信息提示验证码已经发送
-        return new Result(false, MessageConstant.SENT_VALIDATECODE);
+        return new Result(false, MessageConstant.SEND_VALIDATECODE);
+    }
+
+    @PostMapping("/send4Login")
+    public Result send4Login(String telephone) {
+        Jedis jedis = jedisPool.getResource();
+        //生成随机验证码
+        String code = ValidateCodeUtils.generateValidateCode4String(4);
+        //看redis重是否已经存在验证码 存在证明已经发送返回并提示
+        String codeInRedis = jedis.get(RedisMessageConstant.SENDTYPE_LOGIN + "_" + code);
+        if (codeInRedis == null){
+//        不存在则发送验证码
+            try {
+                SMSUtils.sendShortMessage(SMSUtils.VALIDATE_CODE, telephone, code);
+            } catch (ClientException e) {
+                //验证码发送失败
+                e.printStackTrace();
+                return new Result(false, MessageConstant.SEND_VALIDATECODE_FAIL);
+            }
+            //将生成的验证码缓存到redis 设置存活5分钟
+            jedis.setex(RedisMessageConstant.SENDTYPE_LOGIN + "_" + telephone, 60 * 5, code);
+        }
+        //存在 验证码则证明已经发送过 返回并提示
+        return new Result(false,MessageConstant.SEND_VALIDATECODE);
     }
 }

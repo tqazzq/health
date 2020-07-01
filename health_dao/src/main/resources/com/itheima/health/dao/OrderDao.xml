@@ -3,5 +3,13 @@
 <mapper namespace="com.itheima.health.dao.OrderDao">
     <insert id="add" parameterType="com.itheima.health.pojo.Order">
         insert into t_order (member_id,orderDate,orderType,orderStatus,setmeal_id) values (#{memberId},#{orderDate},#{orderType},#{orderStatus},#{setmealId})
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            select last_insert_id()
+        </selectKey>
     </insert>
+    <select id="findById4Detail" resultType="java.util.Map" parameterType="int">
+        select m.name member,s.name setmeal,o.orderDate orederDate,o.orderType orderType
+        from t_order o,t_member m,t_setmeal s
+        where o.member_id = m.id and o.setmeal_id = s.id and o.id = #{id}
+    </select>
 </mapper>

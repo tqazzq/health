@@ -36,6 +36,7 @@
 
 
     <welcome-file-list>
+        <welcome-file>/pages/login.html</welcome-file>
         <welcome-file>/pages/index.html</welcome-file>
         <welcome-file>/pages/setmeal.html</welcome-file>
     </welcome-file-list>

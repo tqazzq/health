@@ -69,11 +69,11 @@
                     }
                     validateCodeButton = $("#validateCodeButton")[0];
                     clock = window.setInterval(doLoop, 1000); //一秒执行一次
-                    axios.post("/validateCode/send4Login.do?telephone=" + telephone).then((response) => {
-                        if(!response.data.flag){
-                            //验证码发送失败
-                            this.$message.error('验证码发送失败，请检查手机号输入是否正确');
-                        }
+                    axios.post("/validateCode/send4Login.do?telephone=" + telephone).then((res) => {
+                       this.$message({
+                                message: res.data.message,
+                                type: res.data.flag? "success":"error"
+                            });
                     });
                 },
                 //登录

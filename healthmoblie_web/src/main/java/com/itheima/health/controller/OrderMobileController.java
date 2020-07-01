@@ -7,10 +7,7 @@ import com.itheima.health.entity.Result;
 import com.itheima.health.pojo.Order;
 import com.itheima.health.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -55,6 +52,12 @@ public class OrderMobileController {
         //如果一致调用service查询
         Order order = orderService.submit(orderInfo);
         //返回正确的提示
-        return new Result(true, MessageConstant.ORDER_SUCCESS,order);
+        return new Result(true, MessageConstant.ORDER_SUCCESS, order);
+    }
+
+    @GetMapping("/findById")
+    public Result findById(Integer id) {
+       Map<String,Object> orderInfo = orderService.findById4Detail(id);
+        return new Result(true,MessageConstant.QUERY_ORDER_SUCCESS,orderInfo);
     }
 }

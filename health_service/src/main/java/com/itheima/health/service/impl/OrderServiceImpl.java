@@ -104,9 +104,14 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(Order.ORDERSTATUS_NO);
         //预约方式
         order.setOrderType(((String) orderInfo.get("orderType")));
-        System.out.println(order);
         //添加新套餐
         orderDao.add(order);
         return order;
+    }
+
+    @Override
+    //查询预约信息
+    public Map<String, Object> findById4Detail(Integer id) {
+        return orderDao.findById4Detail(id);
     }
 }
