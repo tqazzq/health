@@ -5,13 +5,18 @@
          id="WebApp_ID" version="3.0">
 
     <welcome-file-list>
-        <welcome-file>/pages/ordersetting.html</welcome-file>
-        <welcome-file>/pages/setmeal.html</welcome-file>
-        <welcome-file>/pages/checkgroup.html</welcome-file>
-        <welcome-file>/pages/checkitem.html</welcome-file>
+        <welcome-file>login.html</welcome-file>
     </welcome-file-list>
 
     <display-name>Archetype Created Web Application</display-name>
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <!-- 解决post乱码 -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>

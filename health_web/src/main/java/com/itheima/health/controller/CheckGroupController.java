@@ -7,6 +7,7 @@ import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
 import com.itheima.health.pojo.CheckGroup;
 import com.itheima.health.service.CheckGroupService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class CheckGroupController {
     private CheckGroupService checkGroupService;
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyAuthority('CHECKGROUP_ADD')")
     public Result add(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
         checkGroupService.add(checkGroup, checkitemIds);
         return new Result(true, MessageConstant.ADD_CHECKGROUP_SUCCESS);
@@ -30,6 +32,7 @@ public class CheckGroupController {
 
     //分页查询检查组
     @PostMapping("/findPage")
+    @PreAuthorize("hasAnyAuthority('CHECKGROUP_QUERY')")
     public Result findPage(@RequestBody QueryPageBean queryPageBean) {
         PageResult<CheckGroup> pageResult = checkGroupService.findPage(queryPageBean);
         return new Result(true, MessageConstant.QUERY_CHECKGROUP_SUCCESS, pageResult);
@@ -37,6 +40,7 @@ public class CheckGroupController {
 
     //根据Id查询
     @RequestMapping("/findById")
+    @PreAuthorize("hasAnyAuthority('CHECKITEM_QUERY')")
     public Result findById(Integer id) {
         CheckGroup checkGroup = checkGroupService.findById(id);
         if (checkGroup != null) {
@@ -47,6 +51,7 @@ public class CheckGroupController {
 
     //查询改检查组包含的所有检查项id
     @RequestMapping("/findCheckItemIdsByCheckGroupId")
+
     public Result findCheckItemIdsByCheckGroupId(Integer id) {
         List<Integer> list = checkGroupService.findCheckItemIdsByCheckGroupId(id);
         return new Result(true, MessageConstant.QUERY_CHECKITEM_SUCCESS, list);
@@ -54,6 +59,7 @@ public class CheckGroupController {
 
     //发送请求提交数据模型 修改检查组
     @PostMapping("/edit")
+    @PreAuthorize("hasAnyAuthority('CHECKGROUP_EDIT')")
     public Result edit(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
         try {
             checkGroupService.edit(checkGroup, checkitemIds);
@@ -65,6 +71,7 @@ public class CheckGroupController {
 
     //删除检查组
     @RequestMapping("/deleteById")
+    @PreAuthorize("hasAnyAuthority('CHECKGROUP_DELETE')")
     public Result deleteById(Integer id) {
         checkGroupService.deleteById(id);
         return new Result(true, MessageConstant.DELETE_CHECKGROUP_SUCCESS);
@@ -72,6 +79,7 @@ public class CheckGroupController {
 
     //查询所有
     @RequestMapping("/findAll")
+    @PreAuthorize("hasAnyAuthority('CHECKGROUP_QUERY')")
     public Result findAll() {
         List<CheckGroup> checkGroupList = checkGroupService.findAll();
         return new Result(true, MessageConstant.QUERY_CHECKGROUP_SUCCESS,checkGroupList);

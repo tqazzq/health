@@ -10,6 +10,7 @@ import com.itheima.health.pojo.Setmeal;
 import com.itheima.health.service.SetmealService;
 import com.itheima.health.utils.QiNiuUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import redis.clients.jedis.Jedis;
@@ -70,8 +71,9 @@ public class SetmealController {
         return new Result(true, MessageConstant.PIC_UPLOAD_SUCCESS, dataMap);
     }
 
-    @PostMapping("/add")
     //添加套餐
+    @PostMapping("/add")
+    @PreAuthorize("hasAuthority('SETMEAL_ADD')")
     public Result add(@RequestBody Setmeal setmeal, Integer[] checkgroupIds) {
         Jedis jedis = jedisPool.getResource();
         setmealService.add(setmeal, checkgroupIds);
@@ -108,6 +110,7 @@ public class SetmealController {
 
     //修改
     @PostMapping("/update")
+    @PreAuthorize("hasAuthority('SETMEAL_EDIT')")
     public Result update(@RequestBody Setmeal setmeal,Integer[] checkgroupIds){
         Jedis jedis = jedisPool.getResource();
         //旧的套餐数据
@@ -123,6 +126,7 @@ public class SetmealController {
     }
 
     @GetMapping("/delete")
+    @PreAuthorize("hasAuthority('SETMEAL_DELETE')")
     public Result delete(Integer id){
         //查询要删除的套餐图片的名称
         Setmeal setmeal = setmealService.findById(id);
