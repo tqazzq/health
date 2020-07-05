@@ -32,7 +32,8 @@
             <div class="app-container">
                 <div class="box" style="height: 900px">
                     <div class="excelTitle" >
-                        <el-button @click="exportExcel">导出Excel</el-button>运营数据统计
+                        <el-button @click="exportExcel">导出Excel</el-button >
+                        <el-button @click="exportPdf">导出pdf</el-button>运营数据统计
                     </div>
                     <div class="excelTime">日期：{{reportData.reportDate}}</div>
                     <table class="exceTable" cellspacing="0" cellpadding="0">
@@ -83,12 +84,13 @@
                         </tr>
                         <tr v-for="s in reportData.hotSetmeal">
                             <td>{{s.name}}</td>
-                            <td>{{s.setmeal_count}}</td>
-                            <td>{{s.proportion}}</td>
-                            <td></td>
+                            <td align="center">{{s.setmeal_count}}</td>
+                            <td align="center">{{s.percentage}}%</td>
+                            <td>{{s.remark}}</td>
                         </tr>
                     </table>
                 </div>
+        </div>
         </div>
     </body>
     <!-- 引入组件库 -->
@@ -126,6 +128,9 @@
             methods:{
                 exportExcel(){
                     window.location.href = '/report/exportBusinessReport.do';
+                },
+                exportPdf(){
+                    window.location.href = '/report/exportPdfBusinessReportPdf.do';
                 }
             }
         })

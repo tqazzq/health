@@ -2,14 +2,52 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.itheima.health.dao.OrderDao">
     <insert id="add" parameterType="com.itheima.health.pojo.Order">
-        insert into t_order (member_id,orderDate,orderType,orderStatus,setmeal_id) values (#{memberId},#{orderDate},#{orderType},#{orderStatus},#{setmealId})
+        insert into t_order (member_id,orderDate,orderType,orderStatus,setmeal_id) values
+        (#{memberId},#{orderDate},#{orderType},#{orderStatus},#{setmealId})
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             select last_insert_id()
         </selectKey>
     </insert>
     <select id="findById4Detail" resultType="java.util.Map" parameterType="int">
-        select m.name member,s.name setmeal,o.orderDate orederDate,o.orderType orderType
+        select m.name member,s.name setmeal,o.orderDate orderDate,o.orderType orderType,s.id setmeal_id
         from t_order o,t_member m,t_setmeal s
         where o.member_id = m.id and o.setmeal_id = s.id and o.id = #{id}
+    </select>
+    <select id="findOrderCountByDate" resultType="java.lang.Integer" parameterType="string">
+        select count(1) from t_order where orderDate = #{reportDate}
+    </select>
+    <select id="findVisitsCountByDate" resultType="java.lang.Integer" parameterType="string">
+        select count(1) from t_order where orderDate = #{reportDate} and orderStatus = '已到诊'
+    </select>
+    <select id="findOrderCountBetweenDate" resultType="java.lang.Integer">
+        select count(1) from t_order where orderDate between #{monday} and #{sunday}
+    </select>
+    <select id="findVisitsCountAfterDate" resultType="java.lang.Integer" parameterType="string">
+        select count(1) from t_order where orderStatus = '已到诊' and orderDate between #{monday} and now();
+    </select>
+    <!--    热门套餐-->
+    <select id="findHostSetmeal" resultType="java.util.Map">
+       SELECT
+              s.name,
+              COUNT(o.setmeal_id) setmeal_count,
+              COUNT(o.setmeal_id) / t.total AS percentage,
+              s.remark
+            FROM
+              t_setmeal s,
+              t_order o,
+              (SELECT
+                COUNT(1) AS total
+              FROM
+                t_order) AS t
+            WHERE o.setmeal_id = s.id
+            GROUP BY o.setmeal_id,s.name,t.total,s.remark
+            ORDER BY setmeal_count DESC
+            LIMIT 0, 3 ;
+    </select>
+    <select id="findOrderCountOfMonth" resultType="java.lang.Integer">
+        select count(1) from t_order where orderDate between #{firstDayOfMonth} and #{lastDayOfMonth}
+    </select>
+    <select id="findVisitsCountOfMonth" resultType="java.lang.Integer">
+        select count(1) from t_order where orderDate between #{firstDayOfMonth} and now() and orderStatus = '已到诊'
     </select>
 </mapper>

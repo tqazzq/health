@@ -60,13 +60,14 @@ public class ValidateCodeController {
 //        不存在则发送验证码
             try {
                 SMSUtils.sendShortMessage(SMSUtils.VALIDATE_CODE, telephone, code);
+                //将生成的验证码缓存到redis 设置存活5分钟
+                jedis.setex(RedisMessageConstant.SENDTYPE_LOGIN + "_" + telephone, 60 * 5, code);
+                return new Result(true,MessageConstant.SEND_VALIDATECODE_SUCCESS);
             } catch (ClientException e) {
                 //验证码发送失败
                 e.printStackTrace();
                 return new Result(false, MessageConstant.SEND_VALIDATECODE_FAIL);
             }
-            //将生成的验证码缓存到redis 设置存活5分钟
-            jedis.setex(RedisMessageConstant.SENDTYPE_LOGIN + "_" + telephone, 60 * 5, code);
         }
         //存在 验证码则证明已经发送过 返回并提示
         return new Result(false,MessageConstant.SEND_VALIDATECODE);

@@ -5,6 +5,7 @@ import com.itheima.health.pojo.Setmeal;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Tian Qing
@@ -34,4 +35,6 @@ public interface SetmealDao {
     List<Setmeal> findAll();
 
     Setmeal findByDetailById(Integer id);
+
+    List<Map<String, Object>> findSetmealCount();
 }

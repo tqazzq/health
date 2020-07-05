@@ -41,6 +41,7 @@
         <jedis.version>2.9.0</jedis.version>
         <quartz.version>2.2.1</quartz.version>
         <freemarker>2.3.23</freemarker>
+        <jasperreports>6.8.0</jasperreports>
     </properties>
     <!-- 依赖管理标签  必须加 -->
     <dependencyManagement>
@@ -249,6 +250,23 @@
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker}</version>
+            </dependency>
+            <!--导入Itext报表-->
+            <dependency>
+                <groupId>com.lowagie</groupId>
+                <artifactId>itext</artifactId>
+                <version>2.1.7</version>
+            </dependency>
+            <!-- 导入iText报表，支持中文 -->
+            <dependency>
+                <groupId>com.alpha</groupId>
+                <artifactId>itextasian</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports</artifactId>
+                <version>${jasperreports}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

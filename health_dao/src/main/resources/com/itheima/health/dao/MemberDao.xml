@@ -35,4 +35,18 @@
             </if>
         </where>
     </select>
+
+    <select id="findMemberCountByDate" resultType="java.lang.Integer" parameterType="string">
+        select count(1) from t_member where regTime = #{date}
+    </select>
+
+    <select id="findMemberTotalCount" resultType="java.lang.Integer">
+        select count(1) from t_member
+    </select>
+    <select id="findMemberCountAfterDate" resultType="java.lang.Integer" parameterType="string">
+        select count(1) from t_member where regTime &gt;= #{monday}
+    </select>
+    <select id="findMemberCountAfterDateByMonth" resultType="java.lang.Integer">
+        select count(1) from t_member where regTime &gt;= #{firstDayOfMonth}
+    </select>
 </mapper>

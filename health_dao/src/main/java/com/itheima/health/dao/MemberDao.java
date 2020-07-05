@@ -17,4 +17,12 @@ public interface MemberDao {
     void addMember(Member member);
 
     List<Order> findOrderByMemberOrder(Order order);
+
+    Integer findMemberCountByDate(String date);
+
+    int findMemberTotalCount();
+
+    int findMemberCountAfterDate(String monday);
+
+    int findMemberCountAfterDateByMonth(String firstDayOfMonth);
 }

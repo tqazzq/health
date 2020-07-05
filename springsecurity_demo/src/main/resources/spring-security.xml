@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+    <!--
+    【重要】【重要】【重要】
+    这里面的所有路径必须以/开头，否则启动报错
+    -->
+
+    <!--  auto-config: 自动配置，自动生成login页面，login处理，退出处理
+            use-expressions: 是否使用spel表达式 true: access的值可以填表达式(hasRole, hasAuthority, hasAny....)
+                             false: ROEL_角色名(必须是ROLE_打，否则启动报错), 或 security写死的几个常量
+
+     -->
+    <!--  拦截规则配置  -->
+    <security:http security="none" pattern="/js/**"/>
+    <security:http security="none" pattern="/img/**"/>
+    <security:http security="none" pattern="/css/**"/>
+    <security:http security="none" pattern="/login.html"/>
+    <security:http security="none" pattern="/fail.html"/>
+   <security:http auto-config="true" use-expressions="false">
+       <security:intercept-url pattern="/**" access="ROLE_ADMIN"/>
+       <security:form-login
+           login-page="/login.html"
+           username-parameter="adc"
+           password-parameter="bbb"
+           login-processing-url="/login.do"
+           default-target-url="/index.html"
+           authentication-failure-forward-url="/fail.html"
+           ></security:form-login>
+<!--       关闭防跨域攻击 现在自己项目所以可以先关闭以免发生错误-->
+       <security:csrf disabled="true"/>
+   </security:http>
+<!--    认证管理器-->
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userService">
+            <security:user-service>
+                <security:user name="admin" password="{noop}admin" authorities="ROLE_ADMIN"/>
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager>
+    <bean id="userService" class="com.itheima.security.UserServiceImpl"/>
+</beans>

@@ -118,6 +118,11 @@ public class SetmealServiceImpl implements SetmealService {
         template.process(dataMap, new BufferedWriter(new OutputStreamWriter(new FileOutputStream(setmealDatailFile), "utf-8")));
     }
 
+    /**
+     * 分页查询
+     * @param queryPageBean
+     * @return
+     */
     @Override
     public PageResult<Setmeal> findPage(QueryPageBean queryPageBean) {
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
@@ -183,6 +188,15 @@ public class SetmealServiceImpl implements SetmealService {
     @Override
     public Setmeal findDetailById(Integer id) {
         return setmealDao.findByDetailById(id);
+    }
+
+    /**
+     * 查询套餐占比用饼状图展示
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> findSetmealCount() {
+        return setmealDao.findSetmealCount();
     }
 
 

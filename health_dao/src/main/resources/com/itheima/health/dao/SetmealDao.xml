@@ -57,6 +57,14 @@
         s.id = sg.setmeal_id and cg.id = sg.checkgroup_id and
         cg.id = cc.checkgroup_id and ci.id = cc.checkitem_id and s.id = #{id}
     </select>
+    <select id="findSetmealCount" resultType="java.util.Map">
+        select s.name,count(o.id) as value
+        from t_order o,t_setmeal s
+        where o.setmeal_id = s.id
+        group by s.name
+    </select>
+
+
     <resultMap id="setmealDetailMap" type="com.itheima.health.pojo.Setmeal">
         <id property="id" column="id"/>
         <result property="name" column="name" />

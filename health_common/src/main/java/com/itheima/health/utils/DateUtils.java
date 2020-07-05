@@ -151,6 +151,21 @@ public class DateUtils {
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
 
+
+    /**
+     * 获得本月最后一日的日期
+     * @return
+     */
+    public static Date getLastDayOfThisMonth() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        // 增加一个月
+        calendar.add(Calendar.MONTH, 1);
+        // 再减去1天
+        calendar.add(Calendar.DATE, -1);
+        return calendar.getTime();
+    }
+
     /**
      * 根据年份获取年中周列表
      *
@@ -239,6 +254,7 @@ public class DateUtils {
         c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek() + 6);
         return c.getTime();
     }
+
     //获得上周一的日期
     public static Date geLastWeekMonday(Date date) {
         Calendar cal = Calendar.getInstance();
@@ -274,14 +290,14 @@ public class DateUtils {
     }
 
     //获得今天日期
-    public static Date getToday(){
+    public static Date getToday() {
         return new Date();
     }
 
     //获得本月一日的日期
-    public static Date getFirstDay4ThisMonth(){
+    public static Date getFirstDay4ThisMonth() {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH,1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
         return calendar.getTime();
     }
 
